@@ -154,6 +154,17 @@ function getYtDlpExecutable() {
     return process.env.YTDLP_PATH;
   }
 
+  const standaloneLinuxBinary = resolve(
+    process.cwd(),
+    "vendor",
+    "bin",
+    "yt-dlp_linux",
+  );
+
+  if (process.platform === "linux" && existsSync(standaloneLinuxBinary)) {
+    return standaloneLinuxBinary;
+  }
+
   const localBinary = resolve(
     process.cwd(),
     "node_modules",
