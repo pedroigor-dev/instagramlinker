@@ -70,7 +70,7 @@ export async function resolveWithYtDlp(
 }
 
 function runYtDlp(sourceUrl: string) {
-  const executable = process.env.YTDLP_PATH || "yt-dlp";
+  const executable = getYtDlpExecutable();
   const args = [
     "--dump-single-json",
     "--no-warnings",
@@ -129,7 +129,7 @@ function runYtDlp(sourceUrl: string) {
     child.on("error", () => {
       reject(
         new Error(
-          "yt-dlp nao foi encontrado. Instale com `python -m pip install -U yt-dlp[default,curl-cffi]` ou defina YTDLP_PATH.",
+          "yt-dlp nao foi encontrado no servidor. Verifique a instalacao do pacote yt-dlp-exec ou defina YTDLP_PATH.",
         ),
       );
     });
@@ -147,6 +147,24 @@ function runYtDlp(sourceUrl: string) {
       }
     });
   });
+}
+
+function getYtDlpExecutable() {
+  if (process.env.YTDLP_PATH && existsSync(process.env.YTDLP_PATH)) {
+    return process.env.YTDLP_PATH;
+  }
+
+  const localBinary = resolve(
+    process.cwd(),
+    "node_modules",
+    "yt-dlp-exec",
+    "bin",
+    process.platform === "win32" ? "yt-dlp.exe" : "yt-dlp",
+  );
+
+  if (existsSync(localBinary)) return localBinary;
+
+  return "yt-dlp";
 }
 
 function resolveCookiePath(cookiePath: string) {
