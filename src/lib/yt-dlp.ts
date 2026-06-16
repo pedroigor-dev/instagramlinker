@@ -6,6 +6,7 @@ import type {
   InstagramResolveResult,
   ResolvedInstagramMedia,
 } from "@/lib/instagram";
+import { assertPersonalCookiesAllowed, assertSafeCookiePath } from "@/lib/security";
 
 type YtDlpFormat = {
   format_id?: string;
@@ -80,6 +81,9 @@ function runYtDlp(sourceUrl: string) {
   ];
 
   if (process.env.YTDLP_COOKIES_PATH) {
+    assertPersonalCookiesAllowed();
+    assertSafeCookiePath(process.env.YTDLP_COOKIES_PATH);
+
     const cookiesPath = resolveCookiePath(process.env.YTDLP_COOKIES_PATH);
     if (!existsSync(cookiesPath)) {
       throw new Error(
@@ -91,6 +95,8 @@ function runYtDlp(sourceUrl: string) {
   }
 
   if (process.env.YTDLP_COOKIES_FROM_BROWSER) {
+    assertPersonalCookiesAllowed();
+
     args.splice(
       args.length - 1,
       0,

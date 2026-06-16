@@ -5,6 +5,7 @@ import {
   type InstagramResolveResult,
 } from "@/lib/instagram";
 import { resolveLocalInstagram } from "@/lib/local-resolver";
+import { rateLimit } from "@/lib/security";
 import { NextRequest, NextResponse } from "next/server";
 
 export const runtime = "nodejs";
@@ -17,6 +18,9 @@ const resolverEndpoint = process.env.INSTAGRAM_RESOLVER_ENDPOINT;
 const resolverToken = process.env.INSTAGRAM_RESOLVER_TOKEN;
 
 export async function POST(request: NextRequest) {
+  const limited = rateLimit(request, { limit: 20, windowMs: 60_000 });
+  if (limited) return limited;
+
   try {
     const body = (await request.json()) as Partial<ResolverPayload>;
     if (!body.url) {

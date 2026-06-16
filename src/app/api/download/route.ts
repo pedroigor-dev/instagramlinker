@@ -4,12 +4,20 @@ import {
   normalizeInstagramUrl,
 } from "@/lib/instagram";
 import { resolveLocalInstagram } from "@/lib/local-resolver";
+import {
+  assertAllowedMediaUrl,
+  assertReasonableContentLength,
+  rateLimit,
+} from "@/lib/security";
 import { NextRequest, NextResponse } from "next/server";
 import sharp from "sharp";
 
 export const runtime = "nodejs";
 
 export async function GET(request: NextRequest) {
+  const limited = rateLimit(request, { limit: 40, windowMs: 60_000 });
+  if (limited) return limited;
+
   try {
     const url = request.nextUrl.searchParams.get("url");
     const mediaId = request.nextUrl.searchParams.get("mediaId");
@@ -36,6 +44,8 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    assertAllowedMediaUrl(media.downloadUrl);
+
     const upstream = await fetch(media.downloadUrl, {
       headers: {
         "User-Agent":
@@ -50,6 +60,12 @@ export async function GET(request: NextRequest) {
         { status: 502 },
       );
     }
+
+    assertReasonableContentLength(
+      upstream,
+      media.type === "image" ? 30 * 1024 * 1024 : 250 * 1024 * 1024,
+      "A midia",
+    );
 
     if (media.type === "image" && format !== "original") {
       const input = Buffer.from(await upstream.arrayBuffer());

@@ -19,6 +19,18 @@ npm run dev
 
 Abra `http://localhost:3000`.
 
+## Seguranca
+
+- Nunca suba `www.instagram.com_cookies.txt`, `.env.local` ou qualquer cookie
+  pessoal para GitHub/Vercel.
+- Cookies pessoais sao bloqueados em producao por padrao. Para liberar seria
+  necessario definir `ALLOW_SERVER_COOKIES=true`, mas isso nao e recomendado
+  para um site publico.
+- Em producao, prefira `INSTAGRAM_RESOLVER_ENDPOINT` apontando para um backend
+  dedicado, com rate limit, observabilidade e credenciais isoladas.
+- As rotas validam links do Instagram, aplicam rate limit basico e bloqueiam
+  downloads de hosts de midia fora de dominios esperados do Instagram/CDN.
+
 ## Motor de download
 
 A rota `POST /api/resolve` valida e normaliza links do Instagram e usa `yt-dlp`

@@ -1,4 +1,5 @@
 import { DownloadPanel } from "@/components/download-panel";
+import { SafetyInfoButton } from "@/components/safety-info-button";
 import { StoryShareButton } from "@/components/story-share-button";
 import { BadgeCheck, Clock3, ShieldCheck, Sparkles } from "lucide-react";
 
@@ -77,6 +78,7 @@ export default function Home() {
                   <InstagramLogo className="h-6 w-6" />
                 </a>
                 <StoryShareButton />
+                <SafetyInfoButton />
               </div>
             </div>
 

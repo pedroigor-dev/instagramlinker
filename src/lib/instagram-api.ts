@@ -5,6 +5,7 @@ import type {
   InstagramResolveResult,
   ResolvedInstagramMedia,
 } from "@/lib/instagram";
+import { assertPersonalCookiesAllowed, assertSafeCookiePath } from "@/lib/security";
 
 type InstagramCandidate = {
   url: string;
@@ -138,10 +139,14 @@ function shortcodeToMediaId(shortcode: string) {
 }
 
 function getCookieHeader() {
+  assertPersonalCookiesAllowed();
+
   const cookiePath = process.env.YTDLP_COOKIES_PATH;
   if (!cookiePath) {
     throw new Error("Configure YTDLP_COOKIES_PATH para usar a API autenticada.");
   }
+
+  assertSafeCookiePath(cookiePath);
 
   const absolutePath = isAbsolute(cookiePath) ? cookiePath : resolve(process.cwd(), cookiePath);
   const lines = readFileSync(absolutePath, "utf8")

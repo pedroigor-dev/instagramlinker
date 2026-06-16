@@ -3,7 +3,9 @@ import { existsSync } from "node:fs";
 import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
+import { rateLimit } from "@/lib/security";
 import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 import sharp from "sharp";
 
 export const runtime = "nodejs";
@@ -12,7 +14,10 @@ const storyWidth = 1080;
 const storyHeight = 1920;
 const storyDuration = 10;
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+  const limited = rateLimit(request, { limit: 6, windowMs: 60_000 });
+  if (limited) return limited;
+
   const ffmpegPath = getFfmpegPath();
 
   if (!ffmpegPath) {
