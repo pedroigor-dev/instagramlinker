@@ -55,7 +55,7 @@ export async function resolveWithYtDlp(
 
   if (media.length === 0) {
     throw new Error(
-      "Nao encontrei uma URL de midia nesse link. Se o Instagram exigir login, configure YTDLP_COOKIES_PATH ou YTDLP_COOKIES_FROM_BROWSER.",
+      "Nao encontrei uma URL de midia nesse link. Ele pode exigir login, estar indisponivel ou nao expor midia publica.",
     );
   }
 
@@ -75,8 +75,6 @@ function runYtDlp(sourceUrl: string) {
     "--dump-single-json",
     "--no-warnings",
     "--prefer-free-formats",
-    "--format",
-    "bv*+ba/b",
     sourceUrl,
   ];
 
