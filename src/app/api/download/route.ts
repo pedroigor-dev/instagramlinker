@@ -1,5 +1,6 @@
 import {
   assertDownloadableContent,
+  assertUsableShortcode,
   detectInstagramContentType,
   normalizeInstagramUrl,
 } from "@/lib/instagram";
@@ -33,6 +34,7 @@ export async function GET(request: NextRequest) {
     const sourceUrl = normalizeInstagramUrl(url);
     const contentType = detectInstagramContentType(sourceUrl);
     assertDownloadableContent(contentType);
+    assertUsableShortcode(sourceUrl);
 
     const resolved = await resolveLocalInstagram(sourceUrl, contentType);
     const media = resolved.media.find((item) => item.id === mediaId);

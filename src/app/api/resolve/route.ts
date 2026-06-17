@@ -1,5 +1,6 @@
 import {
   assertDownloadableContent,
+  assertUsableShortcode,
   detectInstagramContentType,
   normalizeInstagramUrl,
   type InstagramResolveResult,
@@ -33,6 +34,7 @@ export async function POST(request: NextRequest) {
     const sourceUrl = normalizeInstagramUrl(body.url);
     const contentType = detectInstagramContentType(sourceUrl);
     assertDownloadableContent(contentType);
+    assertUsableShortcode(sourceUrl);
 
     if (resolverEndpoint) {
       const resolved = await callExternalResolver(sourceUrl);

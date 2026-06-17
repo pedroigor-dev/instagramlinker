@@ -72,6 +72,31 @@ export function assertDownloadableContent(type: InstagramContentType) {
   }
 }
 
+export function getInstagramShortcode(url: string) {
+  const parsed = new URL(url);
+  const segments = parsed.pathname.split("/").filter(Boolean);
+  const type = segments[0]?.toLowerCase();
+
+  if (!["p", "reel", "reels", "tv"].includes(type)) return undefined;
+
+  return segments[1];
+}
+
+export function assertUsableShortcode(url: string) {
+  const shortcode = getInstagramShortcode(url);
+  if (!shortcode) return;
+
+  if (!/^[A-Za-z0-9_-]+$/.test(shortcode)) {
+    throw new Error("O codigo do post no link parece invalido.");
+  }
+
+  if (shortcode.length < 10) {
+    throw new Error(
+      "O link parece incompleto. Abra o post no Instagram e copie a URL completa.",
+    );
+  }
+}
+
 export function createDemoResult(
   sourceUrl: string,
   contentType: InstagramContentType,

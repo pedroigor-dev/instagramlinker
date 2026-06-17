@@ -33,7 +33,9 @@ export async function resolvePublicInstagram(
   const media = mapMetaToMedia(meta, contentType);
 
   if (media.length === 0) {
-    throw new Error("O Instagram nao publicou URLs de midia para esse link.");
+    throw new Error(
+      "Nao encontrei midia publica nesse link. Confira se a URL esta completa, se o post ainda existe e se o perfil e publico.",
+    );
   }
 
   return {
