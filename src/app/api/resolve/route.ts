@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
     if (resolverEndpoint) {
       const resolved = await callExternalResolver(sourceUrl);
       return NextResponse.json({
-        ...resolved,
+        ...withAbsoluteExternalDownloadUrls(resolved),
         sourceUrl,
         contentType,
         provider: resolved.provider ?? "external-resolver",
@@ -91,4 +91,30 @@ async function callExternalResolver(sourceUrl: string) {
   }
 
   return payload;
+}
+
+function withAbsoluteExternalDownloadUrls(
+  resolved: InstagramResolveResult,
+): InstagramResolveResult {
+  const endpoint = resolverEndpoint as string;
+  const origin = new URL(endpoint).origin;
+
+  return {
+    ...resolved,
+    media: resolved.media.map((media) => ({
+      ...media,
+      downloadUrl: toAbsoluteUrl(media.downloadUrl, origin),
+      originalDownloadUrl: toAbsoluteUrl(media.originalDownloadUrl, origin),
+    })),
+  };
+}
+
+function toAbsoluteUrl(url: string | undefined, origin: string) {
+  if (!url) return undefined;
+
+  try {
+    return new URL(url).toString();
+  } catch {
+    return new URL(url, origin).toString();
+  }
 }
