@@ -6,6 +6,7 @@
     "postinstall": "node scripts/install-yt-dlp-linux.cjs",
     "dev": "next dev",
     "build": "next build",
+    "diagnose": "node scripts/diagnose-instagram-url.cjs",
     "start": "next start",
     "lint": "eslint"
   },
