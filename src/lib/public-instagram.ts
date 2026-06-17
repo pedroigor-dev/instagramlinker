@@ -34,7 +34,7 @@ export async function resolvePublicInstagram(
 
   if (media.length === 0) {
     throw new Error(
-      "Nao encontrei midia publica nesse link. Confira se a URL esta completa, se o post ainda existe e se o perfil e publico.",
+      "Esse post abre no Instagram, mas o Instagram nao expos URLs de download para acesso anonimo do servidor. Em modo seguro, links assim nao podem ser baixados sem uma sessao autorizada.",
     );
   }
 
