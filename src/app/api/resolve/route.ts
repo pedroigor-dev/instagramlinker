@@ -82,7 +82,7 @@ async function callExternalResolver(sourceUrl: string) {
   });
 
   if (!response.ok) {
-    throw new Error("O resolvedor externo nao conseguiu processar esse link.");
+    throw new Error(await getExternalResolverError(response));
   }
 
   const payload = (await response.json()) as InstagramResolveResult;
@@ -91,6 +91,17 @@ async function callExternalResolver(sourceUrl: string) {
   }
 
   return payload;
+}
+
+async function getExternalResolverError(response: Response) {
+  try {
+    const payload = (await response.json()) as { error?: string };
+    if (payload.error) return payload.error;
+  } catch {
+    // Fall through to the generic message below.
+  }
+
+  return "O resolvedor externo nao conseguiu processar esse link.";
 }
 
 function withAbsoluteExternalDownloadUrls(
